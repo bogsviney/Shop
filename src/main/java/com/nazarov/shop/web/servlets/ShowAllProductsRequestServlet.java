@@ -3,12 +3,14 @@ package com.nazarov.shop.web.servlets;
 
 import com.nazarov.shop.entity.Product;
 import com.nazarov.shop.service.ProductService;
+import com.nazarov.shop.web.utils.PageGenerator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShowAllProductsRequestServlet extends HttpServlet {
@@ -23,7 +25,12 @@ public class ShowAllProductsRequestServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Product> products = productService.findAll();
-        String string = products.toString();
-        resp.getWriter().write(string);
+        PageGenerator pageGenerator = PageGenerator.instance();
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("products",products);
+        String page = pageGenerator.getPage("products_list.html", parameters);
+        resp.getWriter().write(page);
+
     }
+
 }
