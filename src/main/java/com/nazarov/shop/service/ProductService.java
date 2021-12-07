@@ -1,15 +1,14 @@
 package com.nazarov.shop.service;
 
 import com.nazarov.shop.dao.ProductDao;
-import com.nazarov.shop.dao.jdbc.JDBCProductDao;
 import com.nazarov.shop.entity.Product;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class ProductService {
 
-
-    ProductDao productDao;
+    private ProductDao productDao;
 
     public ProductService(ProductDao productDao){
         this.productDao = productDao;
@@ -21,9 +20,11 @@ public class ProductService {
         return products;
     }
 
-
-
-
-
+    public void add (Product product){
+        LocalDateTime now = LocalDateTime.now();
+        product.setPublishDate(now);
+        productDao.add(product);
+        System.out.println("Product added: " + product);
+    }
 
 }
