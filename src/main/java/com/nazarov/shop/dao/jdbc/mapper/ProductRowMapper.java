@@ -29,8 +29,4 @@ public class ProductRowMapper {
 
     }
 
-
-    private static final String FIND_ALL_SQL = "SELECT id, name, price, description, date FROM products;";
-
-
 }
