@@ -11,11 +11,14 @@ public class JDBCProductDao implements ProductDao {
 
     private static final ProductRowMapper PRODUCT_ROW_MAPPER = new ProductRowMapper();
     private static final String FIND_ALL_SQL = "SELECT id, name, price, description, date FROM products;";
+    private static final String FIND_BY_ID_SQL = "SELECT id, name, price, description, date FROM products WHERE id =?;";
     private static final String ADD_SQL = """
             INSERT INTO products (name, price, description,date)
             VALUES(?, ?, ?, ?);
             """;
     private static final String EDIT_SQL = "UPDATE products SET name=?, price=?, description=? WHERE id=?;";
+    private static final String DELETE_SQL = "DELETE FROM products WHERE id = ?;";
+
 
     @Override
     public List<Product> findAll() {
@@ -35,10 +38,30 @@ public class JDBCProductDao implements ProductDao {
     }
 
     @Override
-    public void edit(Product product) {
+    public Product findById(int id) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            Product product = PRODUCT_ROW_MAPPER.mapRow(resultSet);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+
+            return product;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void edit(int id) {
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(EDIT_SQL)) {
-            preparedStatement.setDouble(4, product.getId());
+            Product product = findById(id);
+            preparedStatement.setString(1, product.getName());
+            preparedStatement.setDouble(2, product.getPrice());
+            preparedStatement.setString(3, product.getDescription());
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(product.getPublishDate()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -62,6 +85,20 @@ public class JDBCProductDao implements ProductDao {
             throw new RuntimeException("Error with product adding", e);
         }
     }
+
+    @Override
+    public void delete(int id) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL);) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error with product deleting", e);
+        }
+
+    }
+
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "sqrt");

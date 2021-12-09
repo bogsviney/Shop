@@ -3,6 +3,7 @@ package com.nazarov.shop.service;
 import com.nazarov.shop.dao.ProductDao;
 import com.nazarov.shop.entity.Product;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -21,6 +22,11 @@ public class ProductService {
         return products;
     }
 
+    public Product findById(int id) {
+        Product product = productDao.findById(id);
+        return product;
+    }
+
     public void add(Product product) {
         LocalDateTime now = LocalDateTime.now();
         product.setPublishDate(now);
@@ -28,8 +34,13 @@ public class ProductService {
         System.out.println("Product added: " + product);
     }
 
-    public void edit(Product product) {
-        productDao.edit(product);
+    public void edit(int id) {
+        productDao.edit(id);
+    }
+
+
+    public void delete(int id) {
+        productDao.delete(id);
     }
 
 

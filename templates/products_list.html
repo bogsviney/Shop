@@ -24,23 +24,39 @@
         <th scope="col">Price $</th>
         <th scope="col">Description</th>
         <th scope="col">Date</th>
+        <th scope="col"> </th>
+
+        <th scope="col">Action</th>
+        <th scope="col"> </th>
     </tr>
     </thead>
     <tbody>
     <tr>
 
         <#list products as product>
-        <tr>
+    <tr>
 
         <th scope="row">${product.id}</th>
         <td>${product.name}</td>
         <td>${product.price}</td>
         <td>${product.description}</td>
         <td>${product.publishDate}</td>
-        </tr>
-        </#list>
 
-     </tbody>
+
+        <td> <form action="/products/edit/${product.id}" target="_self" style="float: right; margin-left: 60px;">
+          <button  class="btn btn-dark">EDIT</button>
+        </form></td>
+
+
+        <td><form action="/products/delete/${product.id}" target="_self" style="float: right; margin-left: 60px;">
+             <button  class="btn btn-dark">DELETE</button>
+        </form></td>
+
+
+    </tr>
+    </#list>
+
+    </tbody>
 </table>
 
 
