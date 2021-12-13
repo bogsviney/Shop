@@ -19,7 +19,6 @@ public class ShowAllProductsRequestServlet extends HttpServlet {
 
     public ShowAllProductsRequestServlet(ProductService productService) {
         this.productService = productService;
-
     }
 
     @Override
@@ -28,9 +27,9 @@ public class ShowAllProductsRequestServlet extends HttpServlet {
         PageGenerator pageGenerator = PageGenerator.instance();
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("products",products);
+        resp.setContentType("text/html;charset=UTF-8");
         String page = pageGenerator.getPage("products_list.html", parameters);
         resp.getWriter().write(page);
-
     }
 
 }

@@ -9,48 +9,58 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
 
 
 public class EditProductsServlet extends HttpServlet {
     private ProductService productService;
+
+    public EditProductsServlet() {
+    }
 
     public EditProductsServlet(ProductService productService) {
         this.productService = productService;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Product> products = productService.findAll();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PageGenerator pageGenerator = PageGenerator.instance();
-        HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("products",products);
-        String page = pageGenerator.getPage("products_list.html", parameters);
-        resp.getWriter().write(page);
-
+        int id = Integer.parseInt(request.getParameter("id"));
+        System.out.println("Edit product with id: " + id);
+        Product productToEdit = productService.findById(id);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("product", productToEdit);
+        String page = pageGenerator.getPage("products_edit.html", parameters);
+        response.getWriter().write(page);
     }
 
 
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        String pathInfo = request.getPathInfo();
-//        int index = pathInfo.lastIndexOf("/");
-//        int id = Integer.valueOf(pathInfo.substring(index+1, pathInfo.length()));
-//    Product product = productService.findById(id);
-//    product.setId(Integer.parseInt(request.getParameter("id")));
-//        product.setName(request.getParameter("name"));
-//        product.setPrice(Double.valueOf(request.getParameter("price")));
-//        product.setDescription(request.getParameter("description"));
-//
-//        productService.edit(id);
-//        response.sendRedirect("/products");
-//
-//
-//    }
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Product productToEdit = getProductFromRequest(request);
+        productService.edit(productToEdit);
+        response.sendRedirect("/products");
+    }
 
 
+    int extractProductId(HttpServletRequest request) {
+        String pathInfo = request.getPathInfo();
+        System.out.println("Path info: " + pathInfo);
 
+        int index = pathInfo.lastIndexOf("/");
+        int id = Integer.parseInt(pathInfo.substring(index + 1));
+        return id;
+    }
+
+    private Product getProductFromRequest(HttpServletRequest request){
+        return Product.builder()
+                .id(Integer.parseInt(request.getParameter("id")))
+                .name(request.getParameter("name"))
+                .price(Double.parseDouble(request.getParameter("price")))
+                .description(request.getParameter("description"))
+                .build();
+    }
 
 }
 

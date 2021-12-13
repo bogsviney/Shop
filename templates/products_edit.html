@@ -16,53 +16,19 @@
 </form>
 <h1>In stock:</h1>
 
-<table class="table table-dark table-striped">
-    <thead>
-    <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Name</th>
-        <th scope="col">Price $</th>
-        <th scope="col">Description</th>
-        <th scope="col">Date</th>
-        <th scope="col"> </th>
-
-        <th scope="col">Action</th>
-        <th scope="col"> </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-
-        <#list products as product>
-    <tr>
-
-        <th scope="row">${product.id}</th>
-        <td>${product.name}</td>
-        <td>${product.price}</td>
-        <td>${product.description}</td>
-        <td>${product.publishDate}</td>
-
-
-        <td> <form action="/products/edit/${product.id}" target="_self" style="float: right; margin-left: 60px;">
-            <button  class="btn btn-dark">EDIT</button>
-        </form></td>
-
-
-        <td><form action="/products/delete/${product.id}" target="_self" style="float: right; margin-left: 60px;">
-            <button  class="btn btn-dark">DELETE</button>
-        </form></td>
-
-
-    </tr>
-    </#list>
-
-    </tbody>
-</table>
-
-
-
-
-
+<form action="/products/edit" method="POST">
+    <div class="form-group">
+        <input name="id" value="${product.id}" type="hidden">
+        <label for="inputName">Name</label>
+        <input value="${product.name}" type="text" class="form-control" id="inputName" required name="name">
+        <label for="inputDescription">Description</label>
+        <input value="${product.description}" type="text" class="form-control" id="inputDescription" required name="description">
+        <label for="inputPrice">Price</label>
+        <input value="${product.price?string.computer}" type="number" class="form-control" id="inputPrice" step=".01" min="0" name="price">
+        <br>
+        <input type="submit" class="btn btn-dark" value="Save">
+    </div>
+</form>
 
 
 </body>

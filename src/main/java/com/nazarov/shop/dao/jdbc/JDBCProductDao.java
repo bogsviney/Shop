@@ -19,6 +19,7 @@ public class JDBCProductDao implements ProductDao {
     private static final String EDIT_SQL = "UPDATE products SET name=?, price=?, description=? WHERE id=?;";
     private static final String DELETE_SQL = "DELETE FROM products WHERE id = ?;";
 
+    List<Product> products = new ArrayList<>();
 
     @Override
     public List<Product> findAll() {
@@ -47,6 +48,7 @@ public class JDBCProductDao implements ProductDao {
             preparedStatement.executeUpdate();
 
             return product;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -54,20 +56,25 @@ public class JDBCProductDao implements ProductDao {
     }
 
     @Override
-    public void edit(int id) {
+    public void edit(Product newProduct) {
+//        for (Product product : products) {
+//            if (product.getId() == newProduct.getId()) {
+//                product.setName(newProduct.getName());
+//                product.setPrice(newProduct.getPrice());
+//                product.setDescription(newProduct.getDescription());
+//            }
+//        }
+
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(EDIT_SQL)) {
-            Product product = findById(id);
-            preparedStatement.setString(1, product.getName());
-            preparedStatement.setDouble(2, product.getPrice());
-            preparedStatement.setString(3, product.getDescription());
-            preparedStatement.setTimestamp(4, Timestamp.valueOf(product.getPublishDate()));
+            preparedStatement.setString(1, newProduct.getName());
+            preparedStatement.setDouble(2, newProduct.getPrice());
+            preparedStatement.setString(3, newProduct.getDescription());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Error with product updating", e);
+            throw new RuntimeException("Error with product editing", e);
         }
-
     }
 
 

@@ -13,7 +13,7 @@ public interface ProductDao {
 
     void add(Product product);
 
-    void edit(int id);
+    void edit(Product product);
 
     void delete(int id);
 }

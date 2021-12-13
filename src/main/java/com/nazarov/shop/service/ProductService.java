@@ -34,8 +34,8 @@ public class ProductService {
         System.out.println("Product added: " + product);
     }
 
-    public void edit(int id) {
-        productDao.edit(id);
+    public void edit(Product product) {
+        productDao.edit(product);
     }
 
 
