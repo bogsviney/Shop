@@ -19,15 +19,16 @@ public class ShowAllProductsRequestServlet extends HttpServlet {
 
     public ShowAllProductsRequestServlet(ProductService productService) {
         this.productService = productService;
+
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html;charset=UTF-8");
         List<Product> products = productService.findAll();
         PageGenerator pageGenerator = PageGenerator.instance();
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("products",products);
-        resp.setContentType("text/html;charset=UTF-8");
         String page = pageGenerator.getPage("products_list.html", parameters);
         resp.getWriter().write(page);
     }

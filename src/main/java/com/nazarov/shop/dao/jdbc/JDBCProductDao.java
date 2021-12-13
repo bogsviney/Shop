@@ -19,8 +19,6 @@ public class JDBCProductDao implements ProductDao {
     private static final String EDIT_SQL = "UPDATE products SET name=?, price=?, description=? WHERE id=?;";
     private static final String DELETE_SQL = "DELETE FROM products WHERE id = ?;";
 
-    List<Product> products = new ArrayList<>();
-
     @Override
     public List<Product> findAll() {
         try (Connection connection = getConnection();
@@ -41,42 +39,32 @@ public class JDBCProductDao implements ProductDao {
     @Override
     public Product findById(int id) {
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            Product product = PRODUCT_ROW_MAPPER.mapRow(resultSet);
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL);) {
             preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
-
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            Product product = PRODUCT_ROW_MAPPER.mapRow(resultSet);
             return product;
-
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Error with finding product by ID", e);
         }
-        return null;
     }
 
     @Override
     public void edit(Product newProduct) {
-//        for (Product product : products) {
-//            if (product.getId() == newProduct.getId()) {
-//                product.setName(newProduct.getName());
-//                product.setPrice(newProduct.getPrice());
-//                product.setDescription(newProduct.getDescription());
-//            }
-//        }
-
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(EDIT_SQL)) {
             preparedStatement.setString(1, newProduct.getName());
             preparedStatement.setDouble(2, newProduct.getPrice());
             preparedStatement.setString(3, newProduct.getDescription());
+            preparedStatement.setInt(4, newProduct.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Error with product editing", e);
         }
     }
-
 
     @Override
     public void add(Product product) {
@@ -105,7 +93,6 @@ public class JDBCProductDao implements ProductDao {
         }
 
     }
-
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "sqrt");
